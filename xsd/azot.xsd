@@ -1,0 +1,162 @@
+<?xml version="1.0"?>
+<xs:schema id="workflow" xmlns=""
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+
+	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+  	jaxb:version="1.0"
+  	xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+  	jaxb:extensionBindingPrefixes="xjc"
+  		
+	>
+
+	<xs:annotation>
+		<xs:appinfo>
+			<jaxb:globalBindings>
+				<xjc:simple />
+			</jaxb:globalBindings>
+		</xs:appinfo>
+	</xs:annotation>
+
+	<xs:element name="plugin" type="Plugin" />
+
+	<xs:complexType name="Plugin">
+		<xs:attribute name="name" type="xs:string" />
+		<xs:attribute name="class" type="xs:string" />
+	</xs:complexType>
+	
+	
+	<xs:element name="workflow" type="Workflow" />
+
+	<xs:complexType name="Workflow">
+		<xs:sequence>
+			<xs:choice minOccurs="0" maxOccurs="1">
+				<xs:element name="context" type="Context" maxOccurs="1" />
+			</xs:choice>
+			<xs:group ref="ExecutableNode" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:string" />
+	</xs:complexType>
+
+	<xs:complexType name="Loop">
+		<xs:sequence>
+			<xs:group ref="ExecutableNode" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="in" type="xs:string" />
+		<xs:attribute name="variableId" type="xs:string" />
+	</xs:complexType>
+	
+	<xs:complexType name="Repeat">
+		<xs:sequence>
+			<xs:group ref="ExecutableNode" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="times" type="xs:string" />
+		<xs:attribute name="variableId" type="xs:string" />
+	</xs:complexType>
+	
+	<xs:complexType name="WorkflowRef">
+		<xs:sequence>
+			<xs:element name="variable" minOccurs="0" maxOccurs="unbounded" type="Variable" />
+		</xs:sequence>	
+		<xs:attribute name="filename" type="xs:string" />
+		<xs:attribute name="fork" type="xs:boolean" use="optional" default="false" />
+	</xs:complexType>
+	
+	<xs:complexType name="PluginRef">
+		<xs:sequence>
+			<xs:element name="variable" minOccurs="0" maxOccurs="unbounded" type="Variable" />
+		</xs:sequence>	
+		<xs:attribute name="name" type="xs:string" />
+	</xs:complexType>
+	
+	<xs:group name="ExecutableNode">
+		<xs:sequence>
+			<xs:element name="call" type="Call" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="workflow" type="WorkflowRef" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="loop" type="Loop" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="repeat" type="Repeat" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="plugin" type="PluginRef" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+	</xs:group>
+
+	<xs:complexType name="Context">
+		<xs:sequence>
+			<xs:element name="variable" minOccurs="0" maxOccurs="unbounded" type="Variable" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="Variable">
+		<xs:attribute name="id" type="xs:string" />
+		<xs:attribute name="value" type="xs:string" />
+		<xs:attribute name="overwrite" type="xs:boolean" default="true" use="optional" />
+		<xs:attribute name="report" type="xs:boolean" default="false" use="optional" />
+	</xs:complexType>
+
+	<xs:complexType name="Call">
+		<xs:sequence>
+			<xs:element name="request" type="Request" minOccurs="0" maxOccurs="1" />
+			<xs:element name="response" type="Response" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:string" />
+	</xs:complexType>
+	
+	<xs:complexType name="Content">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="name" type="xs:string" />
+				<xs:attribute name="type" type="xs:string" />
+			</xs:extension>
+		</xs:simpleContent>			
+	</xs:complexType>
+	
+	<xs:complexType name="ExternalContent">
+		<xs:attribute name="name" type="xs:string" />
+		<xs:attribute name="type" type="xs:string" />
+		<xs:attribute name="filename" type="xs:string" />
+	</xs:complexType>
+
+	<xs:complexType name="Request">
+		<xs:sequence>
+			<xs:element name="header" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:attribute name="name" type="xs:string" />
+					<xs:attribute name="value" type="xs:string" />
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="content" type="Content" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="external-content" type="ExternalContent" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:attribute name="url" type="xs:string" />
+		<xs:attribute name="method" type="xs:string" />
+	</xs:complexType>
+
+
+	<xs:complexType name="Response">
+		<xs:sequence>
+			<xs:element name="variable" minOccurs="0" maxOccurs="unbounded" type="Variable" />
+			<xs:element name="plugin" type="PluginRef" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="assert" minOccurs="0" maxOccurs="unbounded" type="Assert" />
+			<xs:element name="raw" minOccurs="0" maxOccurs="1" type="RawResponse" />
+		</xs:sequence>
+		<xs:attribute name="namespaceAware" type="xs:boolean" default="false" />
+	</xs:complexType>
+
+	<xs:complexType name="Assert">
+		<xs:attribute name="expected" type="xs:string" />
+		<xs:attribute name="actual" type="xs:string" />
+	</xs:complexType>
+	
+	<xs:complexType name="RawResponse">
+		<xs:sequence>
+			<xs:element name="header" minOccurs="0" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:attribute name="name" type="xs:string" />
+					<xs:attribute name="value" type="xs:string" />
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="content" type="Content" minOccurs="0" maxOccurs="1" />
+			<xs:element name="external-content" type="ExternalContent" minOccurs="0" maxOccurs="1" />
+		</xs:sequence>
+		<xs:attribute name="code" type="xs:int" />
+		<xs:attribute name="status" type="xs:string" />
+	</xs:complexType>
+</xs:schema>

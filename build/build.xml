@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="azot" default="jar">
+
+	<property environment="env"/>
+	
+	<property name="SRCGEN_DIR" value="../src-gen" />
+	
+	<target name="xsd2java" description="--> generating class from xsd file" >
+		<delete dir="${SRCGEN_DIR}/com/sap/zot" />
+		<mkdir dir="${SRCGEN_DIR}" />
+
+		<taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
+			<classpath>
+				<fileset dir="libs\jaxb-ri-20100511" includes="*.jar" />
+			</classpath>
+		</taskdef>
+
+		<!-- Raylight schema description -->
+		<xjc destdir="${SRCGEN_DIR}" schema="../xsd/azot.xsd" removeOldOutput="yes" package="com.sap.azot" extension="true">
+			<produces dir="${SRCGEN_DIR}/com/sap/azot" includes="* impl/*" />
+		</xjc>
+	</target>
+
+	<!--
+    <property name="launch4j.dir" location="./libs/launch4j" />
+    <taskdef name="launch4j" classpath="${launch4j.dir}/launch4j.jar:${launch4j.dir}/lib/xstream.jar" classname="net.sf.launch4j.ant.Launch4jTask" />
+
+    <target name="launcher" description="Create launcher using Launch4j">
+    	<delete file="tmp-launcher-launch4j.xml" />
+    	<copy file="launcher-launch4j-template.xml" tofile="tmp-launcher-launch4j.xml" />
+    	<replace file="tmp-launcher-launch4j.xml" token="@@ROOT@@" value="${basedir}/.." />
+    	
+    	<launch4j configFile="tmp-launcher-launch4j.xml" />
+    </target>
+	-->
+	
+	<target name="compile" depends="xsd2java" description="--> Compiles java sources " >
+		<delete dir="../bin"/>
+		<mkdir dir="../bin"/>
+		<javac destdir="../bin"  
+				encoding="cp1252"
+               debug="true"
+               includeantruntime="false">
+
+			<src path="../xsd"/>
+			<src path="../src"/>
+			<src path="../src-gen"/>
+			<classpath>
+				<fileset dir="libs/ant170/lib" includes="*.jar" />
+			</classpath>
+		</javac>
+		
+		<copy file="../src/analyze.xsl" tofile="../bin/analyze.xsl" />
+	</target>
+
+	<!-- ================================= 
+    target: jar
+    ================================= -->
+	<target name="jar" depends="compile" description="--> Builds JAR archive">
+		<mkdir dir="../dist"/>
+		<jar manifest="../src/META-INF/MANIFEST.MF" destfile="../dist/${ant.project.name}.jar">
+			<fileset dir="../bin"/>
+		</jar>
+	</target>
+</project>
