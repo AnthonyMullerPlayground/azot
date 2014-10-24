@@ -61,12 +61,39 @@ public class WorkflowReport {
 		this.name = name;
 		
 		File tmpFile = null;
-		long uid = startTime;
-		do {
-			tmpFile = new File(AzotConfig.GLOBAL.OUTPUT_DIRECTORY, "workflow_" + uid);
-			uid++;
-		} while(tmpFile.exists());
+		if (name != null && !name.trim().isEmpty()) {
+			try {
+				tmpFile = new File(AzotConfig.GLOBAL.OUTPUT_DIRECTORY, name);
+				if (tmpFile.exists()) {
+					int id = 1;
+					do {
+						tmpFile = new File(AzotConfig.GLOBAL.OUTPUT_DIRECTORY, name + " ("+ id + ")");
+						id++;
+					} while(tmpFile.exists());
+				}
 
+				boolean ok = tmpFile.mkdirs();
+				if(!ok) {
+					if (AzotConfig.GLOBAL.VERBOSE) {
+						System.out.println("Cannot create directory: " + tmpFile.getCanonicalPath());	
+					}
+					tmpFile = null;
+				}
+			} catch (Exception e) {
+				if (AzotConfig.GLOBAL.VERBOSE) {
+					System.out.println(e.getLocalizedMessage());
+				}
+				tmpFile = null;
+			}
+		}
+		
+		if (tmpFile == null) {
+			long uid = startTime;
+			do {
+				tmpFile = new File(AzotConfig.GLOBAL.OUTPUT_DIRECTORY, "workflow_" + uid);
+				uid++;
+			} while(tmpFile.exists());
+		}
 		
 		this.outputDirectory = tmpFile;
 		if (AzotConfig.GLOBAL.DUMP || AzotConfig.GLOBAL.REPORT) {
