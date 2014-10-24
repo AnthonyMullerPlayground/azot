@@ -1,5 +1,17 @@
-azot
+Azot
 ====
-Azot is a simple tool to describe HTTP workflow. It is especially useful to script RESTful scenario.
+_Originally written for_ **Geneviève CHAZOT** _, a fantastic Technical Writer and a Woman :)_ 
 
-Copyright (C) 2013 Anthony MÜLLER.
+
+Overview
+---
+Azot is a tool which help to execute easily a set of HTTP calls in a workflow.
+
+An Azot workflow is defined in a XML file (syntax will be described later in this wiki page).
+
+Azot is available as an executable JAR (azot.jar) which can also be used as an Ant task. Azot requires Java6 installed on the computer where you will use it.
+
+To launch Azot as an executable, you just need to provide the workflow file as a first argument:
+
+    java -jar azot.jar myworkflow.xml
+
