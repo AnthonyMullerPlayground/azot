@@ -15,4 +15,4 @@ To launch Azot as an executable, you just need to provide the workflow file as a
 
     java -jar azot.jar myworkflow.xml
 
-[How to write an Azot workflow?](https://github.com/AnthonyMullerPlayground/azot/wiki/Workflow-XML-description)
+[How to write an Azot workflow?](https://github.com/AnthonyMullerPlayground/azot/wiki/x.0.--Workflow-XML-description)
