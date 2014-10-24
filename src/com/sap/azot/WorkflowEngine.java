@@ -124,7 +124,8 @@ public class WorkflowEngine {
 			{
 				final Call call = (Call) executable;
 
-				final CallReport callReport = new CallReport(call.getName());
+				String callName = VariableHelper.substituteVariables(call.getName(), getWorkflow().getContext().getVariables());
+				final CallReport callReport = new CallReport(callName);
 				workflowReport.getCallReports().add(count, callReport);
 				callReport.setStartTime(System.currentTimeMillis());
 				try {
