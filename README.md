@@ -1,6 +1,6 @@
 Azot
 ====
-_Originally written for_ **Geneviève CHAZOT** _, a fantastic Technical Writer and a Woman :)_ 
+_Originally written for_ **GeneviÃ¨ve CHAZOT** _, a fantastic Technical Writer and a Woman :)_ 
 
 
 Overview
@@ -15,3 +15,4 @@ To launch Azot as an executable, you just need to provide the workflow file as a
 
     java -jar azot.jar myworkflow.xml
 
+[How to write an Azot workflow?](Workflow-XML-description)
