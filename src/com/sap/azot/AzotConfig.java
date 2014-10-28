@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013 Anthony MÜLLER.
+ * Copyright (C) 2013 Anthony MÃœLLER.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,8 @@ public final class AzotConfig {
 	
 	public boolean ANALYZE = false;
 	
+	public String BREAKPOINT = null;
+	
 	public File OUTPUT_DIRECTORY = null;
 	
 	public String JMX = null;
@@ -51,6 +53,7 @@ public final class AzotConfig {
 			DUMP = toBoolean(azotProperties, "azot-dump", false);
 			REPORT = toBoolean(azotProperties, "azot-report", false);
 			ANALYZE = toBoolean(azotProperties, "azot-analyze", false);
+			BREAKPOINT = toString(azotProperties, "azot-breakpoint", null);
 			
 			OUTPUT_DIRECTORY = toFile(azotProperties, "azot-output-directory", ".");
 			JMX = toString(azotProperties, "azot-jmx", null);
