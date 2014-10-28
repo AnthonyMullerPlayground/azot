@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2013 Anthony MÜLLER.
+ * Copyright (C) 2013 Anthony MÃœLLER.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -141,7 +141,17 @@ public class WorkflowEngine {
 				println("==========================================================================================");
 
 
-				if (AzotConfig.GLOBAL.INTERACTIVE) {
+				// check breakpoints definition (separated by a semicolon)
+				boolean breakpointFound = true;
+				if (AzotConfig.GLOBAL.BREAKPOINT != null) {
+					breakpointFound = false;
+					String[] breakpoints = AzotConfig.GLOBAL.BREAKPOINT.split(";");
+					for (String breakpoint : breakpoints) {
+						breakpointFound |= breakpoint.equals(call.getName());
+					}
+				}
+
+				if (AzotConfig.GLOBAL.INTERACTIVE && breakpointFound) {
 					Scanner sc = new Scanner(System.in);
 					echo("Press 'Enter' to continue... (type 'off' to turn off the interactive mode)");
 					String what = sc.nextLine();
@@ -473,7 +483,10 @@ public class WorkflowEngine {
 
 		
 		// Raw data of response
-		if (response != null && response.getRaw() != null) {
+		if (response != null) {
+			if (response.getRaw() == null) {
+				response.setRaw(new RawResponse());
+			}
 			final RawResponse rawResponse = response.getRaw();
 			rawResponse.setCode(connection.getResponseCode());
 			rawResponse.setStatus(connection.getHeaderField(null));
@@ -662,7 +675,9 @@ public class WorkflowEngine {
 				if (actual != null && !actual.equals(expected)) {
 					callReport.setStatus(Status.FAILURE);
 					callReport.setType("com.sap.azot.AssertionFailedError");
-					callReport.setFailureMessage("Assert failure: expected='" + expected + "' actual='" + actual + "'");
+					callReport.setFailureMessage("Assert failure: expected='" + expected + "' actual='" + actual + "'\n" +
+							"Original values: expected='" + responseAssert.getExpected() + "' actual='" + responseAssert.getActual() + "'\n" +
+									"Response content: " + response.getRaw().getContent().getValue());
 					break;
 				}
 			}
